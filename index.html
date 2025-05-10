@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Cricket Scoring App</title>
+    <style>
+        /* Minimal Tailwind CSS setup (simulating a built Tailwind CSS file) */
+        /* Base styles */
+        *, ::before, ::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            line-height: 1.5;
+            background-color: #1a1a1a; /* Fallback dark background */
+            color: #e5e7eb; /* Light text */
+            /* Cricket stadium background image */
+            background-image: url('https://images.unsplash.com/photo-1593184448312-07837d664cb6');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        /* Overlay for body to ensure readability - reduced opacity for better visibility */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* Reduced opacity from 0.7 to 0.4 */
+            z-index: -1;
+        }
+
+        /* Utilities (adjusted for dark theme) */
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .p-4 {
+            padding: 1rem;
+        }
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        .text-3xl {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+        }
+        .font-bold {
+            font-weight: 700;
+        }
+        .text-gray-200 {
+            color: #e5e7eb;
+        }
+        .text-gray-300 {
+            color: #d1d5db;
+        }
+        .text-gray-400 {
+            color: #9ca3af;
+        }
+        .text-white {
+            color: #ffffff;
+        }
+        .text-yellow-400 {
+            color: #facc15;
+        }
+        .text-red-400 {
+            color: #f87171;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .bg-gray-800 {
+            background-color: #2d3748;
+        }
+        .bg-gray-700 {
+            background-color: #4a5568;
+        }
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .text-xl {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+        }
+        .font-semibold {
+            font-weight: 600;
+        }
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        .text-lg {
+            font-size: 1.125rem;
+            line-height: 1.75rem;
+        }
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+        .grid {
+            display: grid;
+        }
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        .md\:grid-cols-2 {
+            @media (min-width: 768px) {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        .gap-4 {
+            gap: 1rem;
+        }
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        .font-medium {
+            font-weight: 500;
+        }
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+        .p-2 {
+            padding: 0.5rem;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .border {
+            border-width: 1px;
+            border-color: #4a5568;
+        }
+        .rounded {
+            border-radius: 0.25rem;
+        }
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+        .bg-blue-600 {
+            background-color: #2563eb;
+        }
+        .hover\:bg-blue-700:hover {
+            background-color: #1d4ed8;
+        }
+        .bg-gray-600 {
+            background-color: #718096;
+        }
+        .hover\:bg-gray-500:hover {
+            background-color: #a0aec0;
+        }
+        .bg-red-600 {
+            background-color: #dc2626;
+        }
+        .hover\:bg-red-700:hover {
+            background-color: #b91c1c;
+        }
+        .bg-orange-600 {
+            background-color: #ea580c;
+        }
+        .hover\:bg-orange-700:hover {
+            background-color: #c2410c;
+        }
+        .bg-green-600 {
+            background-color: #16a34a;
+        }
+        .hover\:bg-green-700:hover {
+            background-color: #15803d;
+        }
+        .bg-purple-600 {
+            background-color: #9333ea;
+        }
+        .hover\:bg-purple-700:hover {
+            background-color: #7e22ce;
+        }
+        .hidden {
+            display: none;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .gap-2 {
+            gap: 0.5rem;
+        }
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+        .mt-4 {
+            margin-top: 1rem;
+        }
+        .w-20 {
+            width: 5rem;
+        }
+        .min-h-screen {
+            min-height: 100vh;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .space-x-2 > * + * {
+            margin-left: 0.5rem;
+        }
+        .disabled\:opacity-50 {
+            opacity: 0.5;
+        }
+        .disabled\:cursor-not-allowed {
+            cursor: not-allowed;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        /* Button hover animation */
+        button:not(:disabled) {
+            transition: transform 0.2s ease-in-out;
+        }
+        button:not(:disabled):hover {
+            transform: scale(1.05);
+        }
+
+        /* Animation for runs and extras in word format */
+        #runAnimation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            font-weight: bold;
+            color: #facc15; /* Yellow for visibility */
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100; /* Ensure it appears above all other elements */
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+        }
+        .animate-run {
+            animation: fadeInOut 2s forwards;
+        }
+
+        /* Versus animation with thunder effect */
+        #versusAnimation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+        #versusText {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #facc15;
+            text-transform: uppercase;
+        }
+        @keyframes thunderShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        @keyframes lightningFlash {
+            0%, 100% { background-color: rgba(0, 0, 0, 0.9); }
+            10%, 30%, 50% { background-color: rgba(255, 255, 250, 0.2); }
+            20%, 40% { background-color: rgba(0, 0, 0, 0.9); }
+        }
+        @keyframes fadeInOutVersus {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .animate-versus {
+            animation: fadeInOutVersus 4s forwards;
+        }
+        .animate-versus .thunder-shake {
+            animation: thunderShake 0.5s infinite;
+        }
+        .animate-versus .lightningFlash {
+            animation: lightningFlash 2s infinite;
+        }
+
+        /* Add subtle background to sections with a cricket field image */
+        #teamPlayersSection, #matchSetup, #scoringSection {
+            background-image: url('https://images.unsplash.com/photo-1602632010625-ea07c247e2d2');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Overlay for sections - reduced opacity for better visibility */
+        #teamPlayersSection::before, #matchSetup::before, #scoringSection::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* Reduced opacity from 0.6 to 0.3 */
+            z-index: 0;
+        }
+
+        /* Ensure section content is above the overlay */
+        #teamPlayersSection > *, #matchSetup > *, #scoringSection > * {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="versusAnimation" class="hidden">
+        <div id="versusText" class="thunder-shake lightning-flash"></div>
+    </div>
+    <div id="runAnimation"></div>
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold text-gray-200 mb-6 text-center">Simple Cricket Scoring App</h1>
+
+        <!-- Team Players Section -->
+        <div id="teamPlayersSection" class="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold text-gray-200 mb-2">Add Team Players (Optional)</h2>
+            <p class="text-gray-400 mb-4">Add exactly 11 players for each team, with exactly one Wicketkeeper per team.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Team 1 Players -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-200 mb-2">Team 1 Players</h3>
+                    <div id="team1PlayersInput" class="space-y-2">
+                        <!-- 11 rows will be generated by JavaScript -->
+                    </div>
+                    <p id="team1ValidationError" class="text-red-400 mt-2 hidden"></p>
+                </div>
+                <!-- Team 2 Players -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-200 mb-2">Team 2 Players</h3>
+                    <div id="team2PlayersInput" class="space-y-2">
+                        <!-- 11 rows will be generated by JavaScript -->
+                    </div>
+                    <p id="team2ValidationError" class="text-red-400 mt-2 hidden"></p>
+                </div>
+            </div>
+            <div class="flex space-x-2 mt-4">
+                <button id="proceedButton" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700" disabled>Proceed to Match Setup</button>
+                <button id="skipButton" class="w-full bg-gray-600 text-white p-2 rounded hover:bg-gray-500">Skip</button>
+            </div>
+        </div>
+
+        <!-- Match Setup -->
+        <div id="matchSetup" class="bg-gray-800 p-4 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-200 mb-2">Match Setup</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300">Team 1 Name</label>
+                    <input id="team1" type="text" class="mt-1 p-2 w-full border rounded bg-gray-700 text-white" placeholder="Enter Team 1 Name" value="Team A">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300">Team 2 Name</label>
+                    <input id="team2" type="text" class="mt-1 p-2 w-full border rounded bg-gray-700 text-white" placeholder="Enter Team 2 Name" value="Team B">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300">Total Overs</label>
+                    <input id="totalOvers" type="number" class="mt-1 p-2 w-full border rounded bg-gray-700 text-white" value="20" min="1">
+                </div>
+                <div>
+                    <button id="startMatch" class="mt-6 w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Start Match</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoring Section -->
+        <div id="scoringSection" class="hidden">
+            <!-- Current Score -->
+            <div class="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold text-gray-200 mb-2">Current Score</h2>
+                <p id="battingTeam" class="text-lg font-semibold text-gray-200"></p>
+                <p id="currentScore" class="text-2xl font-bold text-white">0/0</p>
+                <p id="currentOvers" class="text-lg text-gray-300">Overs: 0.0</p>
+                <p id="freeHitStatus" class="text-lg text-yellow-400 hidden">Free Hit Active!</p>
+                <div id="batsmenStats" class="mt-4">
+                    <p id="onStrikeBatsman" class="text-gray-300"></p>
+                    <p id="nonStrikeBatsman" class="text-gray-300"></p>
+                </div>
+                <div id="endInningsButtonContainer" class="mt-4">
+                    <button id="endInningsButton" onclick="endInnings()" class="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700">End Innings</button>
+                </div>
+            </div>
+
+            <!-- Ball Input -->
+            <div class="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold text-gray-200 mb-2">Ball Outcome</h2>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button onclick="addRun(0)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">0</button>
+                    <button onclick="addRun(1)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">1</button>
+                    <button onclick="addRun(2)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">2</button>
+                    <button onclick="addRun(3)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">3</button>
+                    <button onclick="addRun(4)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">4</button>
+                    <button onclick="addRun(6)" class="bg-gray-600 p-2 rounded hover:bg-gray-500">6</button>
+                    <button onclick="addWicket()" class="bg-red-600 text-white p-2 rounded hover:bg-red-700">Wicket</button>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-300">Runout + Runs</label>
+                    <input id="runoutRuns" type="number" class="mt-1 p-2 w-20 border rounded bg-gray-700 text-white" value="0" min="0">
+                    <button onclick="addRunout()" class="bg-orange-600 text-white p-2 rounded hover:bg-orange-700">Runout + Runs</button>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-300">Extras</label>
+                    <select id="extraType" class="p-2 border rounded bg-gray-700 text-white">
+                        <option value="none">None</option>
+                        <option value="wd">Wide (wd)</option>
+                        <option value="nb">No Ball (nb)</option>
+                    </select>
+                    <input id="extraRuns" type="number" class="mt-1 p-2 w-20 border rounded bg-gray-700 text-white" value="0" min="0">
+                    <button onclick="addExtra()" class="bg-green-600 text-white p-2 rounded hover:bg-green-700">Add Extra</button>
+                </div>
+            </div>
+
+            <!-- Edit Last Ball -->
+            <div class="bg-gray-800 p-4 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold text-gray-200 mb-2">Edit Last Ball</h2>
+                <p id="lastBall" class="text-gray-400 mb-2">Last Ball: None</p>
+                <div class="flex gap-2 items-center">
+                    <select id="editBallOutcome" class="p-2 border rounded bg-gray-700 text-white">
+                        <option value="none">Select Outcome</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="6">6</option>
+                        <option value="wicket">Wicket</option>
+                        <option value="runout">Runout + Runs</option>
+                        <option value="wd">Wide (wd)</option>
+                        <option value="nb">No Ball (nb)</option>
+                    </select>
+                    <input id="editExtraRuns" type="number" class="p-2 w-20 border rounded hidden bg-gray-700 text-white" value="0" min="0" placeholder="Extra Runs">
+                    <input id="editRunoutRuns" type="number" class="p-2 w-20 border rounded hidden bg-gray-700 text-white" value="0" min="0" placeholder="Runout Runs">
+                    <button onclick="editLastBall()" class="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Apply Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let match = {
+            team1: { 
+                name: "", 
+                score: 0, 
+                wickets: 0, 
+                legalBalls: 0, 
+                ballByBall: [], 
+                players: [], // Array of player objects
+                currentBatsmen: { onStrike: null, nonStrike: null }, // Track current batsmen
+                nextBatsmanIndex: 0 // Track next batsman to come in
+            },
+            team2: { 
+                name: "", 
+                score: 0, 
+                wickets: 0, 
+                legalBalls: 0, 
+                ballByBall: [], 
+                players: [], 
+                currentBatsmen: { onStrike: null, nonStrike: null },
+                nextBatsmanIndex: 0
+            },
+            totalOvers: 0,
+            battingTeam: null,
+            lastBall: null,
+            freeHitActive: false,
+            currentInnings: 1 // Track current innings (1 or 2)
+        };
+
+        // Mapping of runs to words
+        const runWords = {
+            0: "ZERO!",
+            1: "ONE!",
+            2: "TWO!",
+            3: "THREE!",
+            4: "FOUR!",
+            6: "SIX!"
+        };
+
+        // Mapping of extras and dismissals to words
+        const eventWords = {
+            wd: "WIDE!",
+            nb: "NO BALL!",
+            wicket: "OUT!",
+            runout: "OUT!"
+        };
+
+        // Function to initialize player input rows
+        function initializePlayerInputs() {
+            const team1Container = document.getElementById("team1PlayersInput");
+            const team2Container = document.getElementById("team2PlayersInput");
+
+            for (let i = 0; i < 11; i++) {
+                // Team 1 row
+                const team1Row = document.createElement("div");
+                team1Row.className = "grid grid-cols-2 gap-2";
+                team1Row.innerHTML = `
+                    <input type="text" id="team1Player${i}" class="p-2 border rounded bg-gray-700 text-white" placeholder="Player ${i + 1} Name">
+                    <select id="team1Role${i}" class="p-2 border rounded bg-gray-700
